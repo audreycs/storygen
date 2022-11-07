@@ -7,7 +7,7 @@ openai.api_key = "27710ad6c85b412d99bd9d0f92d4b246"
 openai.api_base =  "https://sg-001.openai.azure.com/" # your endpoint should look like the following https://YOUR_RESOURCE_NAME.openai.azure.com/
 openai.api_type = 'azure'
 openai.api_version = '2022-06-01-preview' # this may change in the future
-
+  
 deployment_id='sandbox-dv2' #This will correspond to the custom name you chose for your deployment when you deployed a model.
 
 # openai.Model.retrieve("text-curie-001")
