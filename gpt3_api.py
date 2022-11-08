@@ -82,7 +82,7 @@ def original_gpt3(logger, args, kw_list):
     kw_string = ', '.join(kw_list)
     start_phrase = "Generate a story containing plots: "+kw_string
 
-    # logger.info(start_phrase)
+    logger.info(start_phrase)
     if args.model == 'ada':
         gpt3_model = 'text-ada-001'
     elif args.model == 'babbage':
