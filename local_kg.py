@@ -1,0 +1,146 @@
+import spacy
+from prompt import conceptNetTripleRetrival, similariry
+import os
+from nltk.stem import PorterStemmer
+from collections import defaultdict
+import networkx as nx
+from networkx.algorithms import tournament
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+def build_kg(kw_list):
+    nlp = spacy.load("en_core_web_lg")
+    ps = PorterStemmer()
+
+    words = set()
+
+    for kw in kw_list:
+        doc = nlp(kw)
+        for token in doc:
+            if token.pos_ == "NOUN" or token.pos_ == "VERB":
+                words.add(str((token)))
+    
+    words = list(words)
+
+    triples = []
+    stem_to_words = defaultdict(list)
+    nei_to_hub = dict()
+
+    for w in words:
+        w_triples = [ (temp[0], temp[1], temp[2])for temp in conceptNetTripleRetrival(w)]
+
+        for t in w_triples:
+            if w in t[0]:
+                doc = nlp(t[2])
+                for token in doc:
+                    if token.pos_ == "NOUN" or token.pos_ == "VERB":
+                        stem = ps.stem(str(token))
+                        stem_to_words[stem].append(str(token))
+                        triples.append((w, t[1], stem))
+                        nei_to_hub[stem] = w
+            else:
+                doc = nlp(t[0])
+                for token in doc:
+                    if token.pos_ == "NOUN" or token.pos_ == "VERB":
+                        stem = ps.stem(str(token))
+                        stem_to_words[stem].append(str(token))
+                        triples.append((stem, t[1], w))
+                        nei_to_hub[stem] = w
+
+    if not os.path.isdir('local_kgs/'):
+        os.mkdir('local_kgs/')
+    
+    path = 'local_kgs/'+'kg.txt'
+
+    with open(path, 'w', encoding='utf-8') as f:
+        # f.write(', '.join(kw_list)+'\n')
+        for t in triples:
+            f.write(str(t[0])+'\t'+str(t[1])+'\t'+str(t[2])+'\n')
+
+    return path, words, stem_to_words, nei_to_hub
+
+def calculate_score(logger, args, path, hubs, stem_to_words, nei_to_hub):
+    logger.info("-----Calculating KG Score-----")
+    G = nx.Graph()
+    all_nodes = set(hubs)
+    
+    with open(path, "r", encoding='utf-8') as f:
+        for line in f.readlines():
+            s = line.strip().split('\t')
+            G.add_edge(s[0], s[2], weight=1)
+            all_nodes.add(s[0])
+            all_nodes.add(s[2])
+    
+    G.add_nodes_from(all_nodes)
+
+    # drawing network
+    logger.info("-----drawing network-----")
+    color_map = []
+    for node in G:
+        if node in hubs:
+            color_map.append('red')
+        else: 
+            color_map.append('blue')
+    nx.draw_networkx(G, node_color=color_map, node_size=8, font_size=4, font_color='grey')
+    plt.savefig("local_kgs/kg.png", dpi=600)
+
+    logger.info(f"Hub nodes num: {len(hubs)}, Total nodes num: {len(all_nodes)}")
+    non_hubs = all_nodes - set(hubs)
+    
+    unreachable = 100
+    distance_dict = defaultdict(list)
+
+    for h in hubs:
+        logger.info(f"calculating distance to hub \"{h}\"")
+        for n in non_hubs:
+            if nx.has_path(G, n, h):
+                shortest_path = nx.shortest_path(G, n, h)
+                dis = len(shortest_path) - 1
+                sim = similariry(stem_to_words[n][0], h)
+                distance_dict[n].append((h, dis, sim, sim*1/dis))
+            else:
+                dis = unreachable
+                sim = similariry(stem_to_words[n][0], h)
+                distance_dict[n].append((h, dis, sim, sim*1/dis))
+    
+    hubs = list(hubs)
+    non_hubs = list(non_hubs)
+
+    hub2id = defaultdict(int)
+    nonHubNode2id = defaultdict(int)
+    for idx, h in enumerate(list(hubs)):
+        hub2id[h] = idx
+    for idx, n in enumerate(list(non_hubs)):
+        nonHubNode2id[n] = idx
+    
+    sim_matrix = np.empty((len(non_hubs), len(hubs)))
+    for n in distance_dict.keys():
+        for item in distance_dict[n]:
+            h = item[0]
+            sim = item[3]
+            sim_matrix[nonHubNode2id[n]][hub2id[h]] = sim
+
+    # pd.set_option("display.precision", 4)
+    sim_matrix = pd.DataFrame(sim_matrix, columns=hubs, index = non_hubs)
+
+    alpha = args.alpha
+    final_score = dict()
+    for n in non_hubs:
+        idx = nonHubNode2id[n]
+        idx_h = hub2id[nei_to_hub[n]]
+        score = (sum(sim_matrix.values[idx]) - sim_matrix.values[idx][idx_h]) * alpha + sim_matrix.values[idx][idx_h]
+        final_score[n] = score
+
+    keys = list(final_score.keys())
+    values = [final_score[k] for k in keys]
+    norm_values = [(float(i)-min(values))/(max(values)-min(values)) for i in values]
+
+    final_score = dict(zip(keys + hubs, norm_values + [1.0]*len(hubs)))
+
+    df_final_score = pd.DataFrame({'final_score': norm_values}, index=keys)
+
+    sim_matrix = pd.concat([sim_matrix, df_final_score], axis=1)
+    # logger.info(sim_matrix.head(10))
+
+    return final_score

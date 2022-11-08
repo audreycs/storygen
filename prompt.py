@@ -2,7 +2,6 @@ import requests
 from keytotext import pipeline
 import spacy
 from transformers import BertTokenizer, BertModel
-import torch
 import numpy as np
 from numpy.linalg import norm
 from gpt3_api import *
@@ -25,13 +24,20 @@ expand_rel = {"motivatedbygoal": "motivated by goal",
               "isa": "is a",
               "antonym": "antonym",
               "formof": "form of",
+              "capableof": "capable of",
+              "hasa": "has a",
+              "desires": "desires",
+              "causes": "causes",
+              "partof": "part of",
+              "derivedfrom": "derived from",
+              "createdby": "created by",
               }
 
 def conceptNetTripleRetrival(concept):
     obj = requests.get('http://api.conceptnet.io/c/en/'+str(concept)).json()
 
     context = obj['edges']
-    # print(json.dumps(context[1], indent=4))
+    # logger.info(json.dumps(context[1], indent=4))
 
     triple_list = []
 
@@ -43,7 +49,7 @@ def conceptNetTripleRetrival(concept):
         end = nei["end"]["label"].lower()
         weight = float(nei["weight"])
         surfaceText = nei["surfaceText"]
-
+        
         if relation in discarded_rel:
             continue
         
@@ -69,7 +75,7 @@ def similariry(w1, w2):
     cosine = np.dot(A,B)/(norm(A)*norm(B))
     return cosine
 
-def promptGeneration(kwlist):
+def promptGeneration(logger, args, kwlist):
     first_kw = kwlist[0]
 
     # k2t = pipeline("k2t-base")
@@ -98,7 +104,7 @@ def promptGeneration(kwlist):
     final_rw = sorted(related_words.items(), key=lambda item: item[1], reverse=True)[0][0]
 
     prompt_words = words + [final_rw]
-    print(f"prompt words: {prompt_words}")
-    prompt_sentence = gpt3_k2s(prompt_words)
+    logger.info(f"prompt words: {prompt_words}")
+    prompt_sentence = gpt3_k2s(logger, args, prompt_words)
 
     return prompt_sentence
