@@ -23,8 +23,8 @@ def gpt3_k2s(logger, args, kwlist):
     elif args.prompt_model == 'davinci':
         gpt3_model = 'text-davinci-002'
     else:
-        logger.info("Using generation model \"text-davinci-001\" for story generation!")
-        gpt3_model = 'text-davinci-001'
+        logger.info("Using generation model \"text-curie-001\" for story generation!")
+        gpt3_model = 'text-curie-001'
 
     response = openai.Completion.create(model=gpt3_model,
                                         engine=deployment_id, 
@@ -36,12 +36,20 @@ def gpt3_k2s(logger, args, kwlist):
 
 def gpt3_generation(logger, args, prompt, scores, stem_to_words):
     tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
-    keys = list(scores.keys())
-    values = [scores[k] for k in keys]
+    
+    real_key_value = dict()
+    for k, v in scores.items():
+        real_words = stem_to_words[k]
+        for rw in real_words:
+            real_key_value[rw] = v
+    
+    keys = list(real_key_value.keys())
+    values = [real_key_value[k]*args.beta for k in keys]
+
     _keys = [' '+k for k in keys]
+
     token_ids = [tokenizer(k)['input_ids'][0] for k in _keys]
     token_score_dict = dict(zip(token_ids, values))
-    print(token_score_dict)
 
     if args.model == 'ada':
         gpt3_model = 'text-ada-001'
@@ -52,20 +60,22 @@ def gpt3_generation(logger, args, prompt, scores, stem_to_words):
     elif args.model == 'davinci':
         gpt3_model = 'text-davinci-002'
     else:
-        logger.info("Using generation model \"text-davinci-001\" for story generation!")
-        gpt3_model = 'text-davinci-001'
+        logger.info("Using generation model \"text-curie-001\" for story generation!")
+        gpt3_model = 'text-curie-001'
 
     start_phrase = 'Continue the story beginning with \"' + prompt + "\""
     response = openai.Completion.create(model=gpt3_model,
                                         engine=deployment_id, 
                                         prompt=start_phrase, 
                                         max_tokens=500,
-                                        frequency_penalty=0.1,
+                                        temperature=1,
+                                        top_p=1,
+                                        frequency_penalty=args.freq_pen,
                                         logit_bias = token_score_dict
                                         )
     
     text = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
-    return text
+    return prompt+' '+text
 
 def original_gpt3(logger, args, kw_list):
     kw_list = ["\""+w+"\"" for w in kw_list]
@@ -82,8 +92,8 @@ def original_gpt3(logger, args, kw_list):
     elif args.model == 'davinci':
         gpt3_model = 'text-davinci-002'
     else:
-        logger.info("Using generation model \"text-davinci-001\" for story generation!")
-        gpt3_model = 'text-davinci-001'
+        logger.info("Using generation model \"text-curie-001\" for story generation!")
+        gpt3_model = 'text-curie-001'
 
     response = openai.Completion.create(model=gpt3_model,
                                         engine=deployment_id,

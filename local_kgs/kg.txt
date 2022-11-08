@@ -1,17 +1,28 @@
-floor	used for	walk
-walk	has prerequisite	stand
-walk	motivated by goal	exercis
-walk	has prerequisite	put
-walk	has prerequisite	shoe
-walk	has subevent	move
-walk	has subevent	leg
-walk	has prerequisite	put
-walk	has prerequisite	shoe
-walk	has prerequisite	stand
-walk	distinct from	run
-walk	at location	closet
-walk	at location	mansion
-feet	used for	walk
+bicycl	at location	street
+traffic	at location	street
+street	used for	drive
+pedestrian	at location	street
+line	at location	street
+crosswalk	at location	street
+lamp	at location	street
+post	at location	street
+automobil	at location	street
+street	used for	walk
+pothol	at location	street
+vehicl	at location	street
+ball	at location	street
+garbag	at location	street
+wast	at location	street
+comput	at location	house
+carpet	at location	house
+bedroom	at location	house
+famili	at location	house
+furnitur	at location	house
+window	at location	house
+bathroom	at location	house
+tv	at location	house
+lamp	at location	house
+couch	at location	house
 talk	has subevent	listen
 talk	has subevent	mouth
 express	has subevent	talk
@@ -32,16 +43,14 @@ teach	has subevent	talk
 peopl	has subevent	talk
 express	has prerequisite	talk
 inform	has prerequisite	talk
-comput	at location	house
-carpet	at location	house
-bedroom	at location	house
-famili	at location	house
-furnitur	at location	house
-window	at location	house
-bathroom	at location	house
-tv	at location	house
-lamp	at location	house
-couch	at location	house
+lose	causes	fall
+conscious	causes	fall
+climb	has subevent	fall
+fall	has prerequisite	trip
+jump	causes	fall
+window	causes	fall
+fall	has prerequisite	lose
+fall	has prerequisite	balanc
 cat	at location	lap
 cat	at location	bed
 cat	at location	windowsil
@@ -65,29 +74,20 @@ cat	capable of	king
 cat	at location	chair
 cat	at location	tabl
 cat	has property	felin
-lose	causes	fall
-conscious	causes	fall
-climb	has subevent	fall
-fall	has prerequisite	trip
-jump	causes	fall
-window	causes	fall
-fall	has prerequisite	lose
-fall	has prerequisite	balanc
-bicycl	at location	street
-traffic	at location	street
-street	used for	drive
-pedestrian	at location	street
-line	at location	street
-crosswalk	at location	street
-lamp	at location	street
-post	at location	street
-automobil	at location	street
-street	used for	walk
-pothol	at location	street
-vehicl	at location	street
-ball	at location	street
-garbag	at location	street
-wast	at location	street
+floor	used for	walk
+walk	has prerequisite	stand
+walk	motivated by goal	exercis
+walk	has prerequisite	put
+walk	has prerequisite	shoe
+walk	has subevent	move
+walk	has subevent	leg
+walk	has prerequisite	put
+walk	has prerequisite	shoe
+walk	has prerequisite	stand
+walk	distinct from	run
+walk	at location	closet
+walk	at location	mansion
+feet	used for	walk
 smoke	has prerequisite	cigarett
 smoke	has prerequisite	buy
 smoke	has prerequisite	cigarett

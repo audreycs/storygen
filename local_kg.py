@@ -61,7 +61,6 @@ def build_kg(kw_list):
     return path, words, stem_to_words, nei_to_hub
 
 def calculate_score(logger, args, path, hubs, stem_to_words, nei_to_hub):
-    logger.info("-----Calculating KG Score-----")
     G = nx.Graph()
     all_nodes = set(hubs)
     
@@ -74,22 +73,16 @@ def calculate_score(logger, args, path, hubs, stem_to_words, nei_to_hub):
     
     G.add_nodes_from(all_nodes)
 
-    # drawing network
-    logger.info("-----drawing network-----")
-    color_map = []
-    for node in G:
-        if node in hubs:
-            color_map.append('red')
-        else: 
-            color_map.append('blue')
-    nx.draw_networkx(G, node_color=color_map, node_size=8, font_size=4, font_color='grey')
-    plt.savefig("local_kgs/kg.png", dpi=600)
-
     logger.info(f"Hub nodes num: {len(hubs)}, Total nodes num: {len(all_nodes)}")
     non_hubs = all_nodes - set(hubs)
+
+    logger.info(f"hub words: {hubs}")
+    logger.info(f"related words: {non_hubs}")
     
     unreachable = 100
     distance_dict = defaultdict(list)
+
+    logger.info("")
 
     for h in hubs:
         logger.info(f"calculating distance to hub \"{h}\"")
@@ -142,5 +135,15 @@ def calculate_score(logger, args, path, hubs, stem_to_words, nei_to_hub):
 
     sim_matrix = pd.concat([sim_matrix, df_final_score], axis=1)
     # logger.info(sim_matrix.head(10))
+
+    # drawing network
+    logger.info("-----drawing network-----")
+    color_map = []
+    for node in non_hubs:
+        color_map.append(final_score[node]*10+1)
+    pos = nx.spring_layout(G)
+    nx.draw_networkx(G, pos=pos, nodelist=non_hubs, node_color=color_map, cmap = plt.cm.Blues, node_size=10, font_size=4, font_color='#404040')
+    nx.draw_networkx(G, pos=pos, nodelist=hubs, node_color='red', node_size=12, font_size=4, font_color='#404040')
+    plt.savefig("local_kgs/kg.png", dpi=600)
 
     return final_score

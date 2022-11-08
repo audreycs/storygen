@@ -85,7 +85,7 @@ def promptGeneration(logger, args, kwlist):
     
     words = []
     for token in doc:
-        if token.pos_ == "NOUN" or token.pos_ == "VERB":
+        if token.pos_ == "NOUN" or token.pos_ == "VERB" or token.pos_ == "ADJ":
             words.append(str((token)))
 
     related_words = dict()
