@@ -50,4 +50,4 @@ def gpt3_test():
         # logprob = choice['logprobs']
         # print(logprob)
 
-gpt3_test()
+# gpt3_test()

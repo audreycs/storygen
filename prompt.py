@@ -98,7 +98,7 @@ def promptGeneration(kwlist):
     final_rw = sorted(related_words.items(), key=lambda item: item[1], reverse=True)[0][0]
 
     prompt_words = words + [final_rw]
-    # print(prompt_words)
-    # print(gpt3_k2s(prompt_words))
+    print(f"prompt words: {prompt_words}")
+    prompt_sentence = gpt3_k2s(prompt_words)
 
-    return prompt_words
+    return prompt_sentence

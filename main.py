@@ -18,4 +18,6 @@ if __name__ == "__main__":
 
     promt_sentence = promptGeneration(dataLoader.keyword_list[0])
 
+    print(f"promt_sentence: {promt_sentence}")
+
     
