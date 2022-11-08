@@ -1,56 +1,3 @@
-bicycl	at location	street
-traffic	at location	street
-street	used for	drive
-pedestrian	at location	street
-line	at location	street
-crosswalk	at location	street
-lamp	at location	street
-post	at location	street
-automobil	at location	street
-street	used for	walk
-pothol	at location	street
-vehicl	at location	street
-ball	at location	street
-garbag	at location	street
-wast	at location	street
-comput	at location	house
-carpet	at location	house
-bedroom	at location	house
-famili	at location	house
-furnitur	at location	house
-window	at location	house
-bathroom	at location	house
-tv	at location	house
-lamp	at location	house
-couch	at location	house
-talk	has subevent	listen
-talk	has subevent	mouth
-express	has subevent	talk
-inform	has subevent	talk
-commun	has subevent	talk
-have	has prerequisite	talk
-convers	has prerequisite	talk
-make	has subevent	talk
-phone	has subevent	talk
-call	has subevent	talk
-friend	capable of	talk
-enjoy	has subevent	talk
-compani	has subevent	talk
-friend	has subevent	talk
-talk	motivated by goal	commun
-commun	has prerequisite	talk
-teach	has subevent	talk
-peopl	has subevent	talk
-express	has prerequisite	talk
-inform	has prerequisite	talk
-lose	causes	fall
-conscious	causes	fall
-climb	has subevent	fall
-fall	has prerequisite	trip
-jump	causes	fall
-window	causes	fall
-fall	has prerequisite	lose
-fall	has prerequisite	balanc
 cat	at location	lap
 cat	at location	bed
 cat	at location	windowsil
@@ -74,6 +21,26 @@ cat	capable of	king
 cat	at location	chair
 cat	at location	tabl
 cat	has property	felin
+talk	has subevent	listen
+talk	has subevent	mouth
+express	has subevent	talk
+inform	has subevent	talk
+commun	has subevent	talk
+have	has prerequisite	talk
+convers	has prerequisite	talk
+make	has subevent	talk
+phone	has subevent	talk
+call	has subevent	talk
+friend	capable of	talk
+enjoy	has subevent	talk
+compani	has subevent	talk
+friend	has subevent	talk
+talk	motivated by goal	commun
+commun	has prerequisite	talk
+teach	has subevent	talk
+peopl	has subevent	talk
+express	has prerequisite	talk
+inform	has prerequisite	talk
 floor	used for	walk
 walk	has prerequisite	stand
 walk	motivated by goal	exercis
@@ -88,6 +55,7 @@ walk	distinct from	run
 walk	at location	closet
 walk	at location	mansion
 feet	used for	walk
+smoke	has prerequisite	light
 smoke	has prerequisite	cigarett
 smoke	has prerequisite	buy
 smoke	has prerequisite	cigarett
@@ -105,7 +73,6 @@ stream	at location	forest
 ficu	at location	forest
 tree	part of	forest
 creatur	at location	forest
-moss	at location	forest
 branch	at location	forest
 tress	at location	forest
 tree	at location	forest
@@ -113,4 +80,38 @@ frog	at location	forest
 stick	at location	forest
 forest	has a	tree
 tree	at location	forest
+mammoth	at location	forest
 undergrowth	at location	forest
+lose	causes	fall
+conscious	causes	fall
+climb	has subevent	fall
+fall	has prerequisite	trip
+jump	causes	fall
+window	causes	fall
+fall	has prerequisite	lose
+fall	has prerequisite	balanc
+comput	at location	house
+carpet	at location	house
+bedroom	at location	house
+famili	at location	house
+furnitur	at location	house
+window	at location	house
+bathroom	at location	house
+tv	at location	house
+lamp	at location	house
+couch	at location	house
+bicycl	at location	street
+traffic	at location	street
+street	used for	drive
+pedestrian	at location	street
+line	at location	street
+crosswalk	at location	street
+lamp	at location	street
+post	at location	street
+automobil	at location	street
+street	used for	walk
+pothol	at location	street
+vehicl	at location	street
+ball	at location	street
+garbag	at location	street
+wast	at location	street

@@ -1,5 +1,5 @@
 import requests
-from keytotext import pipeline
+# from keytotext import pipeline
 import spacy
 from transformers import BertTokenizer, BertModel
 import numpy as np
