@@ -79,7 +79,7 @@ def similariry(w1, w2):
     cosine = np.dot(A,B)/(norm(A)*norm(B))
     return cosine
 
-def promptGeneration(logger, kwlist):
+def promptGeneration(logger, kwlist, prompt_model):
     first_kw = kwlist[0]
 
     nlp = spacy.load("en_core_web_lg")
@@ -107,6 +107,6 @@ def promptGeneration(logger, kwlist):
 
     prompt_words = words + [final_rw]
     logger.info(f"prompt words: {prompt_words}")
-    prompt_sentence = gpt3_k2s(logger, prompt_words)
+    prompt_sentence = gpt3_k2s(logger, prompt_words, prompt_model)
 
     return prompt_sentence

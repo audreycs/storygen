@@ -10,7 +10,7 @@ deployment_id='sandbox-dv2' #This will correspond to the custom name you chose f
 # openai.Model.retrieve("text-curie-001")
 
 # Send a completion call to generate an answer
-def gpt3_k2s(logger, kwlist):
+def gpt3_k2s(logger, kwlist, prompt_model):
     s = ', '.join(kwlist)
     start_phrase = "Generate a sentence containing "+s+":"
 
@@ -26,7 +26,7 @@ def gpt3_k2s(logger, kwlist):
     #     logger.info("Using generation model \"text-curie-001\" for story generation!")
     #     gpt3_model = 'text-curie-001'
 
-    response = openai.Completion.create(model='text-curie-001',
+    response = openai.Completion.create(model=prompt_model,
                                         engine=deployment_id, 
                                         prompt=start_phrase, 
                                         max_tokens=100
@@ -34,7 +34,7 @@ def gpt3_k2s(logger, kwlist):
     text = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
     return text
 
-def gpt3_generation(logger, prompt, scores, stem_to_words, beta_, freq_pen):
+def gpt3_generation(logger, prompt, scores, stem_to_words, beta_, freq_pen, story_model):
     tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
     
     real_key_value = dict()
@@ -64,7 +64,7 @@ def gpt3_generation(logger, prompt, scores, stem_to_words, beta_, freq_pen):
     #     gpt3_model = 'text-curie-001'
 
     start_phrase = 'Continue the story beginning with \"' + prompt + "\""
-    response = openai.Completion.create(model='text-curie-001',
+    response = openai.Completion.create(model=story_model,
                                         engine=deployment_id, 
                                         prompt=start_phrase, 
                                         max_tokens=500,
@@ -75,12 +75,15 @@ def gpt3_generation(logger, prompt, scores, stem_to_words, beta_, freq_pen):
                                         )
     
     text = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
-    return text
+    if text.startswith(prompt):
+        return text
+    else:
+        return prompt+' '+text
 
-def original_gpt3(logger, kw_list):
+def original_gpt3(logger, kw_list, story_model):
     kw_list = ["\""+w+"\"" for w in kw_list]
     kw_string = ', '.join(kw_list)
-    start_phrase = "Generate a story containing plots: "+kw_string
+    start_phrase = "Generate a story using plots: "+kw_string
 
     # logger.info(start_phrase)
     # if args.model == 'ada':
@@ -95,7 +98,7 @@ def original_gpt3(logger, kw_list):
     #     logger.info("Using generation model \"text-curie-001\" for story generation!")
     #     gpt3_model = 'text-curie-001'
 
-    response = openai.Completion.create(model='text-curie-001',
+    response = openai.Completion.create(model=story_model,
                                         engine=deployment_id,
                                         prompt=start_phrase,
                                         max_tokens=500,

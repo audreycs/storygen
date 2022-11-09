@@ -3,6 +3,10 @@ from prompt import conceptNetTripleRetrival, similariry
 import os
 from nltk.stem import PorterStemmer
 from collections import defaultdict
+
+import matplotlib
+matplotlib.use('Agg')
+
 import networkx as nx
 from networkx.algorithms import tournament
 import matplotlib.pyplot as plt
@@ -133,7 +137,7 @@ def calculate_score(logger, path, hubs, stem_to_words, nei_to_hub, alpha_):
     df_final_score = pd.DataFrame({'final_score': norm_values}, index=keys)
 
     sim_matrix = pd.concat([sim_matrix, df_final_score], axis=1)
-    # logger.info(sim_matrix.head(10))
+    logger.info(sim_matrix.head(6))
 
     # drawing network
     logger.info("-----drawing network-----")
@@ -141,8 +145,9 @@ def calculate_score(logger, path, hubs, stem_to_words, nei_to_hub, alpha_):
     for node in non_hubs:
         color_map.append(final_score[node]*10+1)
     pos = nx.spring_layout(G)
-    nx.draw_networkx(G, pos=pos, nodelist=non_hubs, node_color=color_map, cmap = plt.cm.Blues, node_size=10, font_size=4, font_color='#404040')
+    nx.draw_networkx(G, pos=pos, nodelist=non_hubs, node_color=color_map, cmap = plt.cm.Blues, node_size=12, font_size=4, font_color='#404040')
     nx.draw_networkx(G, pos=pos, nodelist=hubs, node_color='red', node_size=12, font_size=4, font_color='#404040')
-    plt.savefig("local_kgs/kg.png", dpi=600)
-
+    plt.savefig("local_kgs/kg.png", format="PNG", dpi=600)
+    plt.clf()
+    
     return final_score
