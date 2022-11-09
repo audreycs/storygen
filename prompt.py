@@ -1,5 +1,4 @@
 import requests
-# from keytotext import pipeline
 import spacy
 from transformers import BertTokenizer, BertModel
 import numpy as np
@@ -31,6 +30,11 @@ expand_rel = {"motivatedbygoal": "motivated by goal",
               "partof": "part of",
               "derivedfrom": "derived from",
               "createdby": "created by",
+              "haslastsubevent": "has last subevent",
+              "mannerof": "manner of",
+              "madeof": "made of",
+              "hascontext": "has context",
+              "hasfirstsubevent": "has first subevent"
               }
 
 def conceptNetTripleRetrival(concept):
@@ -75,10 +79,8 @@ def similariry(w1, w2):
     cosine = np.dot(A,B)/(norm(A)*norm(B))
     return cosine
 
-def promptGeneration(logger, args, kwlist):
+def promptGeneration(logger, kwlist):
     first_kw = kwlist[0]
-
-    # k2t = pipeline("k2t-base")
 
     nlp = spacy.load("en_core_web_lg")
     doc = nlp(first_kw)
@@ -105,6 +107,6 @@ def promptGeneration(logger, args, kwlist):
 
     prompt_words = words + [final_rw]
     logger.info(f"prompt words: {prompt_words}")
-    prompt_sentence = gpt3_k2s(logger, args, prompt_words)
+    prompt_sentence = gpt3_k2s(logger, prompt_words)
 
     return prompt_sentence

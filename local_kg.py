@@ -60,7 +60,7 @@ def build_kg(kw_list):
 
     return path, words, stem_to_words, nei_to_hub
 
-def calculate_score(logger, args, path, hubs, stem_to_words, nei_to_hub):
+def calculate_score(logger, path, hubs, stem_to_words, nei_to_hub, alpha_):
     G = nx.Graph()
     all_nodes = set(hubs)
     
@@ -77,7 +77,7 @@ def calculate_score(logger, args, path, hubs, stem_to_words, nei_to_hub):
     non_hubs = all_nodes - set(hubs)
 
     logger.info(f"hub words: {hubs}")
-    logger.info(f"related words: {non_hubs}")
+    # logger.info(f"related words: {non_hubs}")
     
     unreachable = 100
     distance_dict = defaultdict(list)
@@ -117,12 +117,11 @@ def calculate_score(logger, args, path, hubs, stem_to_words, nei_to_hub):
     # pd.set_option("display.precision", 4)
     sim_matrix = pd.DataFrame(sim_matrix, columns=hubs, index = non_hubs)
 
-    alpha = args.alpha
     final_score = dict()
     for n in non_hubs:
         idx = nonHubNode2id[n]
         idx_h = hub2id[nei_to_hub[n]]
-        score = (sum(sim_matrix.values[idx]) - sim_matrix.values[idx][idx_h]) * alpha + sim_matrix.values[idx][idx_h]
+        score = (sum(sim_matrix.values[idx]) - sim_matrix.values[idx][idx_h]) * alpha_ + sim_matrix.values[idx][idx_h]
         final_score[n] = score
 
     keys = list(final_score.keys())
