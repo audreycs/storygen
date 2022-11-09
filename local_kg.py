@@ -139,8 +139,7 @@ def calculate_score(logger, path, hubs, stem_to_words, nei_to_hub, alpha_):
     sim_matrix = pd.concat([sim_matrix, df_final_score], axis=1)
     logger.info(sim_matrix.head(6))
 
-    # drawing network
-    logger.info("-----drawing network-----")
+    # drawing network and save into file
     color_map = []
     for node in non_hubs:
         color_map.append(final_score[node]*10+1)

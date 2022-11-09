@@ -43,7 +43,8 @@ class OutputWidgetHandler(logging.Handler):
             'output_type': 'stream',
             'text': formatted_record+'\n'
         }
-        self.out.outputs = (new_output, ) + self.out.outputs
+        # self.out.outputs = (new_output, ) + self.out.outputs  # new outputs are one the top
+        self.out.outputs = self.out.outputs + (new_output, )
 
     def show_logs(self):
         """ Show the logs """
@@ -51,7 +52,8 @@ class OutputWidgetHandler(logging.Handler):
 
     def clear_logs(self):
         """ Clear the current logs """
-        self.out.clear_output()
+        # self.out.clear_output()
+        self.out.outputs = []
 
 
 def set_logging():
@@ -72,7 +74,7 @@ def set_logging():
     # logger.addHandler(consoleHandler)
 
     widgetsHandler = OutputWidgetHandler()
-    widgetsHandler.setFormatter(logging.Formatter(""))
+    widgetsHandler.setFormatter(logging.Formatter(None))
     logger.addHandler(widgetsHandler)
 
     return widgetsHandler, logger
@@ -127,16 +129,16 @@ def set_imageBox():
 prompt_button = RadioButtons(
                     options=['text-ada-001', 'text-babbage-001', 'text-curie-001', 'text-davinci-002'],
                     value= 'text-curie-001', # Defaults to 'pineapple'
-                    # layout={'width': 'max-content'}, # If the items' names are long
-                    description='Prompt Model:',
+                    layout={'description_width': 'initial'}, # If the items' names are long
+                    description='Prompt:',
                     disabled=False
                     )
 
 story_button = RadioButtons(
                     options=['text-ada-001', 'text-babbage-001', 'text-curie-001', 'text-davinci-002'],
                     value= 'text-curie-001', # Defaults to 'pineapple'
-                    # layout={'width': 'max-content'}, # If the items' names are long
-                    description='Story Model:',
+                    layout={'description_width': 'initial'}, # If the items' names are long
+                    description='Story:',
                     disabled=False
                     )
 
@@ -151,11 +153,13 @@ def change_story_model(model, change):
 def set_models(prompt_model, story_model):
     prompt_button.observe(partial(change_prompt_model, prompt_model))
     story_button.observe(partial(change_story_model, story_model))
+    return prompt_button, story_button
 
 def show_parameters(logger, alpha_, beta_, freq_pen, prompt_model, story_model):
-    logger.info(f"alpha={alpha_}")
-    logger.info(f"beta={beta_}")
-    logger.info(f"freq_penalty={freq_pen}")
-    logger.info(f"prompt_model=\"{prompt_model}\"")
-    logger.info(f"story_model=\"{story_model}\"")
+    logger.info('-----Parameters-----')
+    logger.info(f"alpha = {alpha_}")
+    logger.info(f"beta = {beta_}")
+    logger.info(f"freq_penalty = {freq_pen}")
+    logger.info(f"prompt_model = \"{prompt_model}\"")
+    logger.info(f"story_model = \"{story_model}\"")
     logger.info("")
