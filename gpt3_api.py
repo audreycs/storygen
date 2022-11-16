@@ -34,7 +34,7 @@ def gpt3_k2s(logger, kwlist, prompt_model):
     text = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
     return text
 
-def gpt3_generation(logger, prompt, scores, stem_to_words, beta_, freq_pen, story_model):
+def gpt3_generation(logger, prompt, scores, stem_to_words, beta_, freq_pen, story_model, hub_word_bias):
     tokenizer = GPT2TokenizerFast.from_pretrained("gpt2")
     
     real_key_value = dict()
@@ -44,7 +44,13 @@ def gpt3_generation(logger, prompt, scores, stem_to_words, beta_, freq_pen, stor
             real_key_value[rw] = v
     
     keys = list(real_key_value.keys())
-    values = [real_key_value[k]*beta_ for k in keys]
+    # values = [real_key_value[k]*beta_ for k in keys]
+    values = []
+    for k in keys:
+        if real_key_value[k] >=1.0:
+            values.append(hub_word_bias)  # extremely large bias for hub words
+        else:
+            values.append(real_key_value[k]*beta_)
 
     _keys = [' '+k for k in keys]
 
@@ -75,7 +81,7 @@ def gpt3_generation(logger, prompt, scores, stem_to_words, beta_, freq_pen, stor
                                         )
     
     text = response['choices'][0]['text'].replace('\n', '').replace(' .', '.').strip()
-    if text.startswith(prompt):
+    if prompt in text:
         return text
     else:
         return prompt+' '+text

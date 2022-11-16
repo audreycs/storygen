@@ -14,8 +14,11 @@ def set_beta(beta, beta_):
 def set_freq_pen(freq_penalty, freq_pen):
     freq_pen[0] = freq_penalty
 
+def set_hub_word_bias(hub_word_bias, hub_bias):
+    hub_bias[0] = hub_word_bias
+
 def set_input_bar():
-    inp = Text(placeholder='a big house, sunny day, cute dogs', description='Keywords:', layout = Layout(width='18cm'))
+    inp = Text(placeholder='a dark house, broken window, weird voice', description='Keywords:', layout = Layout(width='18cm'))
     button = Button(description='Run!',
                     layout = {'width':'3cm'},
                     tooltip='Click me')
@@ -155,11 +158,12 @@ def set_models(prompt_model, story_model):
     story_button.observe(partial(change_story_model, story_model))
     return prompt_button, story_button
 
-def show_parameters(logger, alpha_, beta_, freq_pen, prompt_model, story_model):
+def show_parameters(logger, alpha_, beta_, freq_pen, prompt_model, story_model, hub_word_bias):
     logger.info('-----Parameters-----')
     logger.info(f"alpha = {alpha_}")
     logger.info(f"beta = {beta_}")
     logger.info(f"freq_penalty = {freq_pen}")
+    logger.info(f"hub_word_bias = {hub_word_bias}")
     logger.info(f"prompt_model = \"{prompt_model}\"")
     logger.info(f"story_model = \"{story_model}\"")
     logger.info("")

@@ -17,18 +17,17 @@ def build_kg(kw_list):
     nlp = spacy.load("en_core_web_lg")
     ps = PorterStemmer()
 
+    # get hub words
     words = set()
-
     for kw in kw_list:
         doc = nlp(kw)
         for token in doc:
-            if token.pos_ == "NOUN" or token.pos_ == "VERB":
+            if token.pos_ == "NOUN" or token.pos_ == "VERB" or token.pos_ == "ADJ":
                 words.add(str((token)))
-    
     words = list(words)
 
     triples = []
-    stem_to_words = defaultdict(list)
+    stem_to_words = defaultdict(set)
     nei_to_hub = dict()
 
     for w in words:
@@ -36,11 +35,11 @@ def build_kg(kw_list):
 
         for t in w_triples:
             if w in t[0]:
-                doc = nlp(t[2])
+                doc = nlp(t[2]) # t[2] might be a phrase, thus it needs be disected
                 for token in doc:
                     if token.pos_ == "NOUN" or token.pos_ == "VERB":
                         stem = ps.stem(str(token))
-                        stem_to_words[stem].append(str(token))
+                        stem_to_words[stem].add(str(token))
                         triples.append((w, t[1], stem))
                         nei_to_hub[stem] = w
             else:
@@ -48,19 +47,20 @@ def build_kg(kw_list):
                 for token in doc:
                     if token.pos_ == "NOUN" or token.pos_ == "VERB":
                         stem = ps.stem(str(token))
-                        stem_to_words[stem].append(str(token))
+                        stem_to_words[stem].add(str(token))
                         triples.append((stem, t[1], w))
                         nei_to_hub[stem] = w
 
     if not os.path.isdir('local_kgs/'):
         os.mkdir('local_kgs/')
-    
     path = 'local_kgs/'+'kg.txt'
 
     with open(path, 'w', encoding='utf-8') as f:
         # f.write(', '.join(kw_list)+'\n')
         for t in triples:
             f.write(str(t[0])+'\t'+str(t[1])+'\t'+str(t[2])+'\n')
+
+    stem_to_words = defaultdict(list, ((k, list(v)) for k, v in stem_to_words.items()))
 
     return path, words, stem_to_words, nei_to_hub
 
@@ -130,14 +130,18 @@ def calculate_score(logger, path, hubs, stem_to_words, nei_to_hub, alpha_):
 
     keys = list(final_score.keys())
     values = [final_score[k] for k in keys]
-    norm_values = [(float(i)-min(values))/(max(values)-min(values)) for i in values]
+    minumun = 0.2
+    norm_values = [(1-minumun-0.1)*((float(i)-min(values))/(max(values)-min(values)))+minumun for i in values]
 
+    original_score = dict(zip(keys + hubs, values + ['nan']*len(hubs)))
     final_score = dict(zip(keys + hubs, norm_values + [1.0]*len(hubs)))
 
+    df_original_score = pd.DataFrame({'original_score': values}, index=keys)
     df_final_score = pd.DataFrame({'final_score': norm_values}, index=keys)
 
+    sim_matrix = pd.concat([sim_matrix, df_original_score], axis=1)
     sim_matrix = pd.concat([sim_matrix, df_final_score], axis=1)
-    logger.info(sim_matrix.head(6))
+    logger.info(sim_matrix)
 
     # drawing network and save into file
     color_map = []

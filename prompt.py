@@ -34,7 +34,8 @@ expand_rel = {"motivatedbygoal": "motivated by goal",
               "mannerof": "manner of",
               "madeof": "made of",
               "hascontext": "has context",
-              "hasfirstsubevent": "has first subevent"
+              "hasfirstsubevent": "has first subevent",
+              "receivesaction": "receives action"
               }
 
 def conceptNetTripleRetrival(concept):
@@ -79,17 +80,23 @@ def similariry(w1, w2):
     cosine = np.dot(A,B)/(norm(A)*norm(B))
     return cosine
 
-def promptGeneration(logger, kwlist, prompt_model):
-    first_kw = kwlist[0]
+def promptGeneration(logger, input_str, prompt_model):
+    if str(input_str).strip() == "" or str(input_str) == None:
+        logger.info("Using default input: \"a dark house, broken window, weird voice\"")
+        input_str = "a dark house, broken window, weird voice"
+
+    kw_list = str(input_str).strip().split(',')
+    first_kw = kw_list[0]
 
     nlp = spacy.load("en_core_web_lg")
     doc = nlp(first_kw)
     
-    words = []
+    words = set()
     for token in doc:
         if token.pos_ == "NOUN" or token.pos_ == "VERB" or token.pos_ == "ADJ":
-            words.append(str((token)))
+            words.add(str((token)))
 
+    words = list(words)
     related_words = dict()
     for w in words:
         triples = conceptNetTripleRetrival(w)
@@ -109,4 +116,4 @@ def promptGeneration(logger, kwlist, prompt_model):
     logger.info(f"prompt words: {prompt_words}")
     prompt_sentence = gpt3_k2s(logger, prompt_words, prompt_model)
 
-    return prompt_sentence
+    return kw_list, prompt_sentence
