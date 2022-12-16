@@ -31,7 +31,8 @@ def build_kg(kw_list):
     nei_to_hub = dict()
 
     for w in words:
-        w_triples = [ (temp[0], temp[1], temp[2])for temp in conceptNetTripleRetrival(w)]
+        stem_to_words[w].add(str(w))
+        w_triples = [ (temp[0], temp[1], temp[2]) for temp in conceptNetTripleRetrival(w)]
 
         for t in w_triples:
             if w in t[0]:

@@ -1,8 +1,8 @@
-peopl	has property	weird
-voice	used for	sing
-voice	used for	talk
-voice	used for	commun
-voice	at location	radio
+sky	has property	dark
+dark	distinct from	light
+turn	motivated by goal	dark
+light	motivated by goal	dark
+curtain	used for	dark
 comput	at location	house
 carpet	at location	house
 bedroom	at location	house
@@ -13,22 +13,30 @@ bathroom	at location	house
 tv	at location	house
 lamp	at location	house
 couch	at location	house
-glass	receives action	broken
-bone	receives action	broken
-repair	motivated by goal	broken
-umbrella	motivated by goal	broken
-broken	at location	repair
-broken	at location	shop
-rule	receives action	broken
-window	at location	hous
-window	used for	look
-window	at location	build
-window	part of	build
-glass	at location	window
-curtain	at location	window
-glass	part of	window
-sky	has property	dark
-dark	distinct from	light
-turn	motivated by goal	dark
-light	motivated by goal	dark
-curtain	used for	dark
+puppi	has property	cute
+children	has property	cute
+anim	has property	cute
+children	has property	cute
+cat	at location	lap
+cat	at location	bed
+cat	at location	windowsil
+cat	capable of	hunt
+cat	capable of	mice
+cat	has a	leg
+cat	capable of	drink
+cat	capable of	water
+cat	capable of	catch
+cat	capable of	mous
+cat	capable of	climb
+cat	capable of	tree
+cat	desires	milk
+cat	desires	drink
+cat	capable of	corner
+cat	capable of	mous
+dog	distinct from	cat
+cat	at location	vet
+cat	capable of	look
+cat	capable of	king
+cat	at location	chair
+cat	at location	tabl
+cat	has property	felin

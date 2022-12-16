@@ -44,17 +44,15 @@ def run(logger, args):
     dataLoader.readfile(args.data_dir)
     kw_list = dataLoader.keyword_list[0]
 
-    # kw_list = str(inp.value).strip().split(',')
-
-    promt_sentence = promptGeneration(logger, args, kw_list)
+    prompt_sentence = promptGeneration(logger, args, kw_list)
 
     path, hubs, stem_to_words, nei_to_hub = build_kg(kw_list=kw_list)
     final_score = calculate_score(logger, args, path, hubs, stem_to_words, nei_to_hub)
 
-    story = gpt3_generation(logger, args, promt_sentence, final_score, stem_to_words)
+    story = gpt3_generation(logger, args, prompt_sentence, final_score, stem_to_words)
 
     logger.info("-----Story-----")
-    logger.info(f"promt_sentence: {promt_sentence}")
+    logger.info(f"prompt_sentence: {prompt_sentence}")
     logger.info(story)
 
     gpt3_story = original_gpt3(logger, args, kw_list)
